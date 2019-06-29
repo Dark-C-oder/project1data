@@ -73,6 +73,42 @@ class dbHelper():
         previousLp = int(result[0])
         return previousLp
 
+    def manipulateLP(self,cost):
+
+
+        if cost >= 500 and cost < 1000:
+            if cRef.lp >=100:
+                cost = cost-100
+                cRef.lp = cRef.lp-100
+                db.updatelp(cRef)
+                return cost
+
+            elif cRef.lp<100:
+                cost = cost - cRef.lp
+                cRef.lp=0
+                db.updatelp(cRef)
+                return cost
+
+
+        elif cost >= 1000:
+            if cRef.lp >=100:
+                cost = cost-100
+
+                cRef.lp = cRef.lp-100 + (0.1*cost)
+
+                db.updatelp(cRef)
+                return cost
+
+            elif cRef.lp<100:
+                cost = cost - cRef.lp
+                cRef.lp = 0  + (0.1*cost)
+                db.updatelp(cRef)
+                return cost
+
+
+
+    def showCost(self,finalcost):
+        print("the amount you have to pay after applying lp = ",finalcost)
 
 class customer():
     def __init__(self, name, phone, email, lp,uid, Active):
@@ -159,11 +195,8 @@ if choice == 2:
             previousLp=db.fetchLp()
             cRef = customer(None, None, None, previousLp, None, None)
             cost = int(input("Enter cost="))
-            if cost > 500 and cost < 1000:
-                cRef.lp = abs((10 / 100) * cost - int(cRef.lp))
-                db.updatelp(cRef)
-            elif cost >= 1000:
-                pass
+            final_cost = db.manipulateLP(cost)
+            db.showCost(final_cost)
     else:
         print("No customer of the entered uid exists!!!!!!!!")
 if choice == 3:
